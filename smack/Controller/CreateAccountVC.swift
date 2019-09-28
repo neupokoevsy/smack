@@ -23,8 +23,13 @@ class CreateAccountVC: UIViewController {
 
     }
     
+    //Default variables
+    var avatarName = "ProfileDefault"
+    var avatarColor = "[0.5, 0.5, 0.5, 1]"
+    
     //MARK: Buttons actions
     @IBAction func createAccountPressed(_ sender: UIButton) {
+        guard let name = usernameTxt.text , usernameTxt.text != "" else {return}
         guard let email = emailTxt.text , emailTxt.text != "" else {return}
         guard let password = passwordTxt.text , passwordTxt.text != "" else {return}
         
@@ -32,7 +37,12 @@ class CreateAccountVC: UIViewController {
             if success {
                 AuthService.instance.loginUser(email: email, password: password, completion: {(success) in
                     if success {
-                        print("logged in user!", AuthService.instance.authToken)
+                        AuthService.instance.createUser(name: name, email: email, avatarName: self.avatarName, avatarColor: self.avatarColor, completion: {(success) in
+                            if success {
+                                self.performSegue(withIdentifier: UNWIND, sender: nil)
+                                print(UserDataService.instance.name, UserDataService.instance.avatarName)
+                            }
+                        }   )
                     }
                     
                 })
